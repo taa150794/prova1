@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ronaldo vs Messi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color:floralwhite;
+        margin: 0;
+        padding: 0;
+    }
+    h1, h2 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        padding: 20px;
+    }
+    .option {
+        flex: 1 1 300px;
+        max-width: 400px;
+    }
+    img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+        border: 3px solid transparent;
+        border-radius: 10px;
+        transition: border-color 0.2s;
+    }
+    img:hover {
+        border-color: green;
+    }
+    .votes {
+        font-weight: bold;
+        margin-top: 10px;
+        font-size: 18px;
+    }
+    .disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+    ol {
+        list-style-position: inside;
+        font-size: 18px;
+        padding: 0;
+        margin: 10px auto;
+        display: inline-block;
+        text-align: left;
+    }
+    
+    </style>
+</head>
+
+
+
+<body>
+    <h1><span style="color: black; font-family:Georgia, 'Times New Roman', Times, serif;">RONALDO</span> <span style="color: red; font-family:Georgia, 'Times New Roman', Times, serif;">VS</span> 
+        <span style="color:black; font-family:Georgia, 'Times New Roman', Times, serif;">MESSI</span></h1>
+    <h2>Choose your GOAT</h2>
+
+    <div class="container">
+        <div class="option {{ 'disabled' if voted }}">
+            <form action="/vote/ronaldo" method="POST">
+                <button type="submit" style="border:none;background:none;" {{ 'disabled' if voted }}>
+                    <img src="{{ url_for('static', filename='images/ronaldo.jpg') }}" alt="Cristiano Ronaldo">
+                </button>
+            </form>
+            <div class="votes">Cristiano Ronaldo: {{ votes["ronaldo"]|thousands }} votes</div>
+        </div>
+
+        <div class="option {{ 'disabled' if voted }}">
+            <form action="/vote/messi" method="POST">
+                <button type="submit" style="border:none;background:none;" {{ 'disabled' if voted }}>
+                    <img src="{{ url_for('static', filename='images/messi.jpg') }}" alt="Lionel Messi">
+                </button>
+            </form>
+            <div class="votes">Lionel Messi: {{ votes["messi"]|thousands }} votes</div>
+        </div>
+    </div>
+
+    {% if voted %}
+        <p style="margin-top: 30px; color: darkgreen;">
+            <strong>Your vote: {{ voted.capitalize() }}</strong>
+        </p>
+
+        {% set ordered = votes.items()|sort(attribute=1, reverse=true) %}
+        <div style="margin-top: 20px;">
+            <h3>Ranking:</h3>
+            <ol style="list-style-position: inside; font-size: 18px;">
+                {% for name, count in ordered %}
+                <li>{{ name.capitalize() }}: {{ count|thousands }} votes</li>
+                {% endfor %}
+            </ol>
+        </div>
+    {% endif %}
+</body>
+</html>
